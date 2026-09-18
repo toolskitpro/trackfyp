@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Shadowban Checker — TrackFyp</title>
-<meta name="description" content="Pata karein aapki TikTok reach kam hone ki wajah normal hai ya account suppress ho raha hai.">
+<meta name="description" content="Chand sawalon se andaza lagayein kahin aapki reach normal se kam to nahi.">
 <link rel="icon" href="data:,">
 <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="../css/style.css">
@@ -16,24 +16,72 @@
 <div class="page-hero container">
   <div class="kicker">SHADOWBAN CHECKER</div>
   <h1 class="page-title" data-ur="Shadowban Checker" data-en="Shadowban Checker">Shadowban Checker</h1>
-  <p class="page-desc" data-ur="Public engagement patterns dekh kar bataye ga ke reach drop normal hai ya suppression ke signs hain. Ye TikTok ka official status nahi, sirf ek estimate hai." data-en="Looks at public engagement patterns to flag whether a reach drop looks normal or like suppression. Not an official TikTok status — just an estimate.">Public engagement patterns dekh kar bataye ga ke reach drop normal hai ya suppression ke signs hain. Ye TikTok ka official status nahi, sirf ek estimate hai.</p>
+  <p class="page-desc" data-ur="4 sawalon ke jawab dein aur andaza lagayein ke reach kam hone ki wajah normal hai ya suppression jaisi lag rahi hai." data-en="Answer 4 questions to get an estimate of whether your low reach looks normal or like suppression.">4 sawalon ke jawab dein aur andaza lagayein ke reach kam hone ki wajah normal hai ya suppression jaisi lag rahi hai.</p>
 </div>
 
 <div class="container" style="padding-bottom:60px;">
   <div class="card">
-    <label class="field-label" data-ur="TikTok username (bina @)" data-en="TikTok username (without @)">TikTok username (bina @)</label>
-    <div class="input-row">
-      <input class="field-input" type="text" data-ur-ph="yourhandle" data-en-ph="yourhandle" placeholder="yourhandle">
-      <button class="btn btn-hot" onclick="showBackendNote('note')" data-ur="Check karein" data-en="Check">Check karein</button>
-    </div>
-    <div class="backend-note" id="note">
-      <b data-ur="Ye feature abhi live nahi hai." data-en="This feature isn't live yet.">Ye feature abhi live nahi hai.</b>
-      <span data-ur=" Pichle videos ka reach-history data chahiye hota hai jo backend server ke bina fetch nahi ho sakta. Agle phase mein add hoga." data-en=" This needs historical reach data that can't be fetched without a backend server. Coming in the next phase.">Pichle videos ka reach-history data chahiye hota hai jo backend server ke bina fetch nahi ho sakta. Agle phase mein add hoga.</span>
+
+    <label class="field-label" data-ur="Pichle 2 hafton mein For You Page views achanak gire?" data-en="Did your For You Page views suddenly drop in the last 2 weeks?">Pichle 2 hafton mein For You Page views achanak gire?</label>
+    <select class="field-input" id="s1">
+      <option value="0">Nahi, sab normal hai</option>
+      <option value="1">Thora kam hue</option>
+      <option value="2">Haan, bohot achanak aur bohot kam</option>
+    </select>
+
+    <label class="field-label" data-ur="Kya aapki video hashtag search mein nazar aati hai?" data-en="Does your video show up in hashtag search?">Kya aapki video hashtag search mein nazar aati hai?</label>
+    <select class="field-input" id="s2">
+      <option value="0">Haan, nazar aati hai</option>
+      <option value="2">Check kiya, nahi mili</option>
+    </select>
+
+    <label class="field-label" data-ur="Engagement rate (likes+comments/views) mein koi achanak tabdeeli?" data-en="Any sudden change in engagement rate (likes+comments/views)?">Engagement rate (likes+comments/views) mein koi achanak tabdeeli?</label>
+    <select class="field-input" id="s3">
+      <option value="0">Nahi, normal hai</option>
+      <option value="1">Thori kam hui</option>
+      <option value="2">Bohot achanak gir gayi</option>
+    </select>
+
+    <label class="field-label" data-ur="Kya aapne recently koi community guideline warning payi?" data-en="Did you recently get a community guideline warning?">Kya aapne recently koi community guideline warning payi?</label>
+    <select class="field-input" id="s4">
+      <option value="0">Nahi</option>
+      <option value="2">Haan</option>
+    </select>
+
+    <button class="btn btn-hot" id="checkBtn" data-ur="Check karein" data-en="Check">Check karein</button>
+
+    <div class="result-box" id="resultBox">
+      <div class="risk-meter" id="riskMeter"></div>
+      <p style="color:var(--muted);font-size:12px;margin-top:10px;" data-ur="Ye ek estimate hai, TikTok ka official status nahi." data-en="This is an estimate, not TikTok's official status.">Ye ek estimate hai, TikTok ka official status nahi.</p>
     </div>
   </div>
 </div>
 
 <div id="site-footer"></div>
 <script src="../js/main.js"></script>
+<style>
+  .risk-meter{display:flex;align-items:center;gap:20px;flex-wrap:wrap;}
+  .risk-badge{font-family:'Space Grotesk',sans-serif;font-weight:700;font-size:18px;padding:10px 18px;border-radius:10px;flex-shrink:0;}
+</style>
+<script>
+  document.getElementById("checkBtn").addEventListener("click", () => {
+    const score = ["s1","s2","s3","s4"].reduce((sum,id) => sum + Number(document.getElementById(id).value), 0);
+    let badge, badgeBg, badgeColor, desc;
+    if(score <= 1){
+      badge = "Low Risk"; badgeBg = "var(--teal-dim)"; badgeColor = "var(--teal)";
+      desc = "Koi bara warning sign nahi mila — reach mein kami content/timing se related lag rahi hai, suppression jaisi nahi.";
+    } else if(score <= 4){
+      badge = "Medium Risk"; badgeBg = "rgba(255,194,75,.15)"; badgeColor = "var(--gold)";
+      desc = "Kuch signals mile hain jo dhyan dene layak hain. 1-2 hafte content quality/consistency par focus karein aur dobara check karein.";
+    } else {
+      badge = "High Risk"; badgeBg = "var(--hot-dim)"; badgeColor = "var(--hot)";
+      desc = "Kai signals ek sath mile hain jo suppression ki taraf ishara karte hain. Community guidelines dobara padhein aur kuch din spammy behavior (bohot zyada posting, repeated hashtags) se bachein.";
+    }
+    document.getElementById("riskMeter").innerHTML =
+      `<div class="risk-badge" style="background:${badgeBg};color:${badgeColor};">${badge}</div>
+       <div style="flex:1;min-width:200px;font-size:13px;color:var(--text);">${desc}</div>`;
+    document.getElementById("resultBox").classList.add("show");
+  });
+</script>
 </body>
 </html>

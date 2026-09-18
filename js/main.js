@@ -43,16 +43,23 @@
     const el = document.getElementById("site-footer");
     if(!el) return;
     el.innerHTML = `
-      <div class="container">
-        <div data-ur="© TrackFyp — Pakistani TikTok creators ke liye bana." data-en="© TrackFyp — built for Pakistani TikTok creators.">© TrackFyp</div>
-        <div data-ur="Sirf public data use hota hai. Kisi ke account ka koi private data access nahi hota." data-en="Only public data is used. No private account data is ever accessed.">Only public data is used.</div>
+      <div class="container" style="flex-direction:column;gap:14px;">
+        <div style="display:flex;gap:18px;flex-wrap:wrap;">
+          <a href="${BASE}privacy.html" data-ur="Privacy Policy" data-en="Privacy Policy">Privacy Policy</a>
+          <a href="${BASE}terms.html" data-ur="Terms of Use" data-en="Terms of Use">Terms of Use</a>
+          <a href="${BASE}about.html" data-ur="Contact / About" data-en="Contact / About">Contact / About</a>
+        </div>
+        <div style="display:flex;justify-content:space-between;flex-wrap:wrap;gap:10px;width:100%;">
+          <div data-ur="© TrackFyp — Pakistani TikTok creators ke liye bana." data-en="© TrackFyp — built for Pakistani TikTok creators.">© TrackFyp</div>
+          <div data-ur="Sirf public data use hota hai. Kisi ke account ka koi private data access nahi hota." data-en="Only public data is used. No private account data is ever accessed.">Only public data is used.</div>
+        </div>
       </div>`;
   }
 
   function applyLang(lang){
     document.querySelectorAll("[data-ur]").forEach(elm => {
       const val = lang === "ur" ? elm.getAttribute("data-ur") : elm.getAttribute("data-en");
-      if(val !== null) elm.textContent = val;
+      if(val !== null) elm.innerHTML = val;
     });
     document.querySelectorAll("[data-ur-ph]").forEach(elm => {
       const val = lang === "ur" ? elm.getAttribute("data-ur-ph") : elm.getAttribute("data-en-ph");
