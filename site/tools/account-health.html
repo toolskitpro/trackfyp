@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="ur">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Account Health Check — TrackFyp</title>
+<meta name="description" content="Chand sawalon ke jawab dein aur apni TikTok account ki health score payein.">
+<link rel="icon" href="data:,">
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../css/style.css">
+</head>
+<body>
+<script>window.BASE = "../";</script>
+<div id="site-header"></div>
+
+<div class="page-hero container">
+  <div class="kicker">ACCOUNT HEALTH CHECK</div>
+  <h1 class="page-title" data-ur="Account Health Check" data-en="Account Health Check">Account Health Check</h1>
+  <p class="page-desc" data-ur="Chand sawalon ke jawab dein — overall health score aur behtar karne ke suggestions milenge." data-en="Answer a few questions — get an overall health score and suggestions to improve.">Chand sawalon ke jawab dein — overall health score aur behtar karne ke suggestions milenge.</p>
+</div>
+
+<div class="container" style="padding-bottom:60px;">
+  <div class="card">
+
+    <label class="field-label" data-ur="Aap hafte mein kitni baar post karte hain?" data-en="How many times a week do you post?">Aap hafte mein kitni baar post karte hain?</label>
+    <select class="field-input" id="q1">
+      <option value="3">1-2 baar</option>
+      <option value="10">3-5 baar</option>
+      <option value="10">6+ baar (roz ya us se zyada)</option>
+    </select>
+
+    <label class="field-label" data-ur="Pichle mahine views ka trend kaisa raha?" data-en="How has your view trend been in the last month?">Pichle mahine views ka trend kaisa raha?</label>
+    <select class="field-input" id="q2">
+      <option value="3">Kam ho rahe hain</option>
+      <option value="6">Same rahe hain</option>
+      <option value="10">Badh rahe hain</option>
+    </select>
+
+    <label class="field-label" data-ur="Har video mein hashtags badalte hain ya wahi 3-4 repeat karte hain?" data-en="Do you vary hashtags, or reuse the same 3-4 every time?">Har video mein hashtags badalte hain ya wahi 3-4 repeat karte hain?</label>
+    <select class="field-input" id="q3">
+      <option value="3">Wahi hashtags repeat karta hn</option>
+      <option value="10">Har video mein badalta hn</option>
+    </select>
+
+    <label class="field-label" data-ur="Videos ki length kaisi rakhte hain?" data-en="How long are your videos usually?">Videos ki length kaisi rakhte hain?</label>
+    <select class="field-input" id="q4">
+      <option value="10">15-45 second</option>
+      <option value="6">45 second - 2 minute</option>
+      <option value="4">2 minute se zyada</option>
+    </select>
+
+    <button class="btn btn-hot" id="checkBtn" data-ur="Health check karein" data-en="Check health">Health check karein</button>
+
+    <div class="result-box" id="resultBox">
+      <div class="health-grid" id="healthGrid"></div>
+    </div>
+  </div>
+</div>
+
+<div id="site-footer"></div>
+<script src="../js/main.js"></script>
+<style>
+  .health-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:14px;}
+  @media (max-width:600px){.health-grid{grid-template-columns:1fr;}}
+  .health-card{background:var(--bg);border:1px solid var(--line);border-radius:12px;padding:16px;}
+  .health-card .top{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;}
+  .health-card .top b{font-size:13.5px;}
+  .health-card .top span{font-family:'Space Grotesk',sans-serif;font-weight:700;font-size:16px;}
+  .bar-track{height:6px;background:var(--panel);border-radius:6px;overflow:hidden;}
+  .bar-fill{height:100%;border-radius:6px;}
+  .health-card p{margin:8px 0 0;font-size:12px;color:var(--muted);line-height:1.5;}
+</style>
+<script>
+  document.getElementById("checkBtn").addEventListener("click", () => {
+    const consistency = Number(document.getElementById("q1").value);
+    const trend = Number(document.getElementById("q2").value);
+    const variety = Number(document.getElementById("q3").value);
+    const length = Number(document.getElementById("q4").value);
+    const overall = Math.round((consistency + trend + variety + length) / 4 * 10);
+
+    const cards = [
+      { label:"Posting Consistency", val: consistency*10, color: consistency>=8 ? "var(--teal)" : "var(--gold)",
+        note: consistency>=8 ? "Achi consistency hai, isi tarah jari rakhein." : "Zyada regular posting se reach behtar ho sakti hai." },
+      { label:"View Trend", val: trend*10, color: trend>=8 ? "var(--teal)" : trend>=5 ? "var(--gold)" : "var(--hot)",
+        note: trend>=8 ? "Views badh rahe hain — jo kaam kar raha hai wahi jari rakhein." : "Content style ya posting time badal kar dekhein." },
+      { label:"Hashtag Variety", val: variety*10, color: variety>=8 ? "var(--teal)" : "var(--hot)",
+        note: variety>=8 ? "Achi variety hai." : "Hamare Hashtag Generator se naye options try karein." },
+      { label:"Video Length", val: length*10, color: length>=8 ? "var(--teal)" : "var(--gold)",
+        note: length>=8 ? "Length ideal range mein hai." : "15-45 second range generally behtar retention deti hai." }
+    ];
+
+    let html = "";
+    cards.forEach(c => {
+      html += `<div class="health-card">
+        <div class="top"><b>${c.label}</b><span style="color:${c.color}">${c.val}%</span></div>
+        <div class="bar-track"><div class="bar-fill" style="width:${c.val}%;background:${c.color};"></div></div>
+        <p>${c.note}</p>
+      </div>`;
+    });
+    html += `<div class="health-card"><div class="top"><b>Overall Health</b><span style="color:var(--teal)">${overall} / 100</span></div>
+      <div class="bar-track"><div class="bar-fill" style="width:${overall}%;background:var(--teal);"></div></div>
+      <p>Ye score aapke apne jawabon par based hai — jitna honest jawab utna accurate result.</p></div>`;
+
+    document.getElementById("healthGrid").innerHTML = html;
+    document.getElementById("resultBox").classList.add("show");
+  });
+</script>
+</body>
+</html>

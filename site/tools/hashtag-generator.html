@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="ur">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Hashtag Generator — TrackFyp</title>
+<meta name="description" content="Apni niche likhein aur broad, niche-specific aur Pakistan-trending TikTok hashtags free mein payein.">
+<link rel="icon" href="data:,">
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../css/style.css">
+</head>
+<body>
+<script>window.BASE = "../";</script>
+<div id="site-header"></div>
+
+<div class="page-hero container">
+  <div class="kicker">HASHTAG GENERATOR</div>
+  <h1 class="page-title" data-ur="Hashtag &amp; Keyword Generator" data-en="Hashtag &amp; Keyword Generator">Hashtag &amp; Keyword Generator</h1>
+  <p class="page-desc" data-ur="Apni niche likhein — broad, niche-specific aur trending hashtags ka mix mil jayega. Ye 100% yahin browser mein chalta hai, koi data kahin nahi jata." data-en="Type your niche — get a mix of broad, niche-specific and trending hashtags. This runs entirely in your browser, no data goes anywhere.">Apni niche likhein — broad, niche-specific aur trending hashtags ka mix mil jayega. Ye 100% yahin browser mein chalta hai, koi data kahin nahi jata.</p>
+</div>
+
+<div class="container" style="padding-bottom:60px;">
+  <div class="card">
+    <label class="field-label" data-ur="Apna topic / niche likhein" data-en="Type your topic / niche">Apna topic / niche likhein</label>
+    <div class="input-row">
+      <input class="field-input" id="nicheInput" type="text" data-ur-ph="jaise: cooking, fitness, comedy, makeup, tech" data-en-ph="e.g. cooking, fitness, comedy, makeup, tech" placeholder="jaise: cooking, fitness, comedy, makeup, tech">
+      <button class="btn btn-hot" id="genBtn" data-ur="Generate karein" data-en="Generate">Generate karein</button>
+    </div>
+
+    <div class="result-box" id="resultBox">
+      <div class="section-sub" data-ur="Broad hashtags" data-en="Broad hashtags">Broad hashtags</div>
+      <div class="tag-cloud" id="broadTags"></div>
+      <div class="section-sub" data-ur="Niche-specific hashtags" data-en="Niche-specific hashtags">Niche-specific hashtags</div>
+      <div class="tag-cloud" id="nicheTags"></div>
+      <div class="section-sub" data-ur="Pakistan mein abhi trending" data-en="Trending in Pakistan right now">Pakistan mein abhi trending</div>
+      <div class="tag-cloud" id="trendTags"></div>
+    </div>
+  </div>
+</div>
+
+<div id="site-footer"></div>
+<script src="../js/main.js"></script>
+<script>
+  // Small curated dataset — rule-based, no AI/backend needed.
+  const NICHE_MAP = {
+    cooking: { broad:["foodtiktok","cooking","recipe","foodie"], niche:["desikhana","pakistanifood","homemaderecipe","quickrecipes"] },
+    food: { broad:["foodtiktok","cooking","recipe","foodie"], niche:["desikhana","pakistanifood","homemaderecipe","quickrecipes"] },
+    fitness: { broad:["fitness","workout","gymtok","fitnessmotivation"], niche:["homeworkout","pakistanifitness","weightlossjourney","gymtippk"] },
+    comedy: { broad:["comedy","funny","funnyvideos","lol"], niche:["pakistanicomedy","deshihumor","sketchcomedy","relatablepk"] },
+    makeup: { broad:["makeup","makeuptutorial","beauty","mua"], niche:["pakistanimakeup","desibeauty","budgetmakeup","eidmakeup"] },
+    beauty: { broad:["makeup","makeuptutorial","beauty","mua"], niche:["pakistanimakeup","desibeauty","budgetmakeup","eidmakeup"] },
+    fashion: { broad:["fashion","style","outfit","ootd"], niche:["pakistanifashion","desistyle","budgetfashion","eidoutfit"] },
+    tech: { broad:["tech","technology","gadgets","techtips"], niche:["techpakistan","mobilereview","techurdu","gadgetreview"] },
+    travel: { broad:["travel","travelvlog","explore","wanderlust"], niche:["pakistantravel","northernpakistan","travelvlogpk","hiddengems"] },
+    education: { broad:["learnontiktok","education","study","tips"], niche:["studytips","pakistanistudents","examtips","onlinelearning"] },
+    business: { broad:["smallbusiness","entrepreneur","business","marketing"], niche:["smallbusinesspk","onlinebusinesspakistan","freelancingpk","digitalmarketingpk"] }
+  };
+  const DEFAULT_TREND = ["fyp","viral","trending","foryoupage"];
+
+  function pickBucket(text){
+    const t = text.toLowerCase();
+    for(const key in NICHE_MAP){
+      if(t.includes(key)) return NICHE_MAP[key];
+    }
+    return null;
+  }
+
+  function renderTags(containerId, tags, cls){
+    const el = document.getElementById(containerId);
+    el.innerHTML = tags.map(t => `<span class="tag ${cls||''}">#${t}</span>`).join("");
+  }
+
+  document.getElementById("genBtn").addEventListener("click", () => {
+    const val = document.getElementById("nicheInput").value.trim();
+    if(!val) return;
+    const bucket = pickBucket(val) || { broad:["fyp","viral",""+val.replace(/\s+/g,''), val.split(' ')[0]], niche:[val.replace(/\s+/g,'')+"tiktok", "pakistan"+val.split(' ')[0], val.split(' ')[0]+"tips", val.split(' ')[0]+"pk"] };
+    renderTags("broadTags", bucket.broad, "");
+    renderTags("nicheTags", bucket.niche, "teal");
+    renderTags("trendTags", DEFAULT_TREND, "hot");
+    document.getElementById("resultBox").classList.add("show");
+  });
+
+  document.getElementById("nicheInput").addEventListener("keydown", e => {
+    if(e.key === "Enter") document.getElementById("genBtn").click();
+  });
+</script>
+</body>
+</html>

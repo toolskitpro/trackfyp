@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="ur">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SEO Keyword Finder — TrackFyp</title>
+<meta name="description" content="Apna topic likhein aur caption ke liye behtareen search-friendly keywords payein.">
+<link rel="icon" href="data:,">
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../css/style.css">
+</head>
+<body>
+<script>window.BASE = "../";</script>
+<div id="site-header"></div>
+
+<div class="page-hero container">
+  <div class="kicker">SEO KEYWORD FINDER</div>
+  <h1 class="page-title" data-ur="SEO Keyword Finder" data-en="SEO Keyword Finder">SEO Keyword Finder</h1>
+  <p class="page-desc" data-ur="Topic likhein aur caption ke liye search-friendly keywords payein, taake video search mein bhi nazar aaye." data-en="Type a topic and get search-friendly keywords for your caption, so your video shows up in search too.">Topic likhein aur caption ke liye search-friendly keywords payein, taake video search mein bhi nazar aaye.</p>
+</div>
+
+<div class="container" style="padding-bottom:60px;">
+  <div class="card">
+    <label class="field-label" data-ur="Apna topic likhein" data-en="Type your topic">Apna topic likhein</label>
+    <div class="input-row">
+      <input class="field-input" id="topicInput" type="text" data-ur-ph="jaise: skincare, cooking, fitness" data-en-ph="e.g. skincare, cooking, fitness" placeholder="jaise: skincare, cooking, fitness">
+      <button class="btn btn-hot" id="findBtn" data-ur="Keywords dhoondein" data-en="Find keywords">Keywords dhoondein</button>
+    </div>
+
+    <div class="result-box" id="resultBox">
+      <table class="kw-table" id="kwTable"></table>
+    </div>
+  </div>
+</div>
+
+<div id="site-footer"></div>
+<script src="../js/main.js"></script>
+<style>
+  .kw-table{width:100%;border-collapse:collapse;margin-top:6px;}
+  .kw-table th{text-align:left;font-size:11px;color:var(--muted);font-weight:500;padding:8px 10px;border-bottom:1px solid var(--line);}
+  .kw-table td{padding:11px 10px;font-size:13px;border-bottom:1px solid var(--line);}
+  .vol-pill{font-size:11px;padding:3px 9px;border-radius:6px;font-weight:600;}
+  .vol-high{background:var(--hot-dim);color:var(--hot);}
+  .vol-med{background:rgba(255,194,75,.15);color:var(--gold);}
+  .vol-low{background:var(--teal-dim);color:var(--teal);}
+</style>
+<script>
+  const KEYWORD_MAP = {
+    skincare: [["affordable skincare routine","high"],["skincare for oily skin pakistan","med"],["night skincare steps","high"],["skincare mistakes to avoid","low"]],
+    cooking: [["quick recipes for beginners","high"],["desi cooking hacks","med"],["one pot recipes","high"],["cooking mistakes to avoid","low"]],
+    fitness: [["home workout no equipment","high"],["weight loss tips pakistan","med"],["beginner workout routine","high"],["fitness mistakes to avoid","low"]],
+    fashion: [["budget outfit ideas","high"],["pakistani fashion trends","med"],["how to style basics","high"],["fashion mistakes to avoid","low"]],
+    makeup: [["affordable makeup dupes","high"],["everyday makeup look","med"],["makeup for beginners","high"],["makeup mistakes to avoid","low"]],
+    tech: [["best budget phone pakistan","high"],["tech tips and tricks","med"],["gadget review","high"],["common tech mistakes","low"]],
+    business: [["small business ideas pakistan","high"],["how to start freelancing","med"],["business tips for beginners","high"],["business mistakes to avoid","low"]]
+  };
+
+  function renderRows(rows){
+    const volClass = { high:"vol-high", med:"vol-med", low:"vol-low" };
+    const volLabel = { high:"Zyada", med:"Darmiyana", low:"Kam" };
+    let html = "<tr><th>Keyword</th><th>Search demand</th></tr>";
+    rows.forEach(([kw, vol]) => {
+      html += `<tr><td>${kw}</td><td><span class="vol-pill ${volClass[vol]}">${volLabel[vol]}</span></td></tr>`;
+    });
+    document.getElementById("kwTable").innerHTML = html;
+    document.getElementById("resultBox").classList.add("show");
+  }
+
+  document.getElementById("findBtn").addEventListener("click", () => {
+    const val = document.getElementById("topicInput").value.trim().toLowerCase();
+    if(!val) return;
+    let rows = null;
+    for(const key in KEYWORD_MAP){
+      if(val.includes(key)){ rows = KEYWORD_MAP[key]; break; }
+    }
+    if(!rows){
+      rows = [
+        [val + " for beginners","high"],
+        ["how to " + val,"med"],
+        [val + " tips","high"],
+        [val + " mistakes to avoid","low"]
+      ];
+    }
+    renderRows(rows);
+  });
+
+  document.getElementById("topicInput").addEventListener("keydown", e => {
+    if(e.key === "Enter") document.getElementById("findBtn").click();
+  });
+</script>
+</body>
+</html>
