@@ -14,7 +14,8 @@
     { href: BASE + "tools/analyze.html", ur: "Analyze", en: "Analyze" },
     { href: BASE + "tools/hashtag-generator.html", ur: "Hashtags", en: "Hashtags" },
     { href: BASE + "tools/best-time.html", ur: "Best Time", en: "Best Time" },
-    { href: BASE + "blog/index.html", ur: "Blog", en: "Blog" }
+    { href: BASE + "blog/index.html", ur: "Blog", en: "Blog" },
+    { href: BASE + "premium.html", ur: "Premium", en: "Premium" }
   ];
 
   function buildHeader(){
@@ -43,14 +44,14 @@
     const el = document.getElementById("site-footer");
     if(!el) return;
     el.innerHTML = `
-      <div class="container" style="flex-direction:column;gap:14px;">
+      <div class="container" style="display:flex;flex-direction:column;gap:16px;">
         <div style="display:flex;gap:18px;flex-wrap:wrap;">
           <a href="${BASE}privacy.html" data-ur="Privacy Policy" data-en="Privacy Policy">Privacy Policy</a>
           <a href="${BASE}terms.html" data-ur="Terms of Use" data-en="Terms of Use">Terms of Use</a>
           <a href="${BASE}about.html" data-ur="Contact / About" data-en="Contact / About">Contact / About</a>
         </div>
-        <div style="display:flex;justify-content:space-between;flex-wrap:wrap;gap:10px;width:100%;">
-          <div data-ur="© TrackFyp — Pakistani TikTok creators ke liye bana." data-en="© TrackFyp — built for Pakistani TikTok creators.">© TrackFyp</div>
+        <div style="display:flex;flex-direction:column;gap:6px;flex-wrap:wrap;width:100%;border-top:1px solid var(--line);padding-top:16px;">
+          <div data-ur="© TrackFyp — TikTok creators ke liye bana." data-en="© TrackFyp — built for TikTok creators.">© TrackFyp</div>
           <div data-ur="Sirf public data use hota hai. Kisi ke account ka koi private data access nahi hota." data-en="Only public data is used. No private account data is ever accessed.">Only public data is used.</div>
         </div>
       </div>`;

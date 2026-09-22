@@ -85,6 +85,18 @@ img{max-width:100%;}
 .page-title{font-size:30px;margin-bottom:10px;}
 .page-desc{color:var(--muted);font-size:14.5px;max-width:620px;line-height:1.65;}
 
+/* ---- Ad slot placeholder (replace with real AdSense code after approval) ---- */
+.ad-slot{
+  max-width:1080px;margin:24px auto;padding:18px;
+  border:1.5px dashed var(--line);border-radius:10px;
+  display:flex;align-items:center;justify-content:center;
+  color:var(--muted);font-size:11.5px;letter-spacing:.03em;text-transform:uppercase;
+  min-height:90px;
+}
+.ad-slot.leaderboard{max-width:728px;min-height:90px;}
+.ad-slot.in-feed{margin:0;min-height:100px;}
+.ad-slot.in-content{max-width:650px;}
+
 /* ---- Card / frame ---- */
 .card{
   background:var(--panel);border:1px solid var(--line);border-radius:16px;padding:26px;

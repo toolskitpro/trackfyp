@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="ur">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Premium — TrackFyp</title>
+<meta name="description" content="Video post karne se pehle uska virality score check karein — Premium plan ke sath.">
+<link rel="icon" href="data:,">
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+<script>window.BASE = "";</script>
+<div id="site-header"></div>
+
+<div class="page-hero container">
+  <div class="kicker">PREMIUM</div>
+  <h1 class="page-title" data-ur="Post Karne Se Pehle Check Karein" data-en="Check Before You Post">Post Karne Se Pehle Check Karein</h1>
+  <p class="page-desc" data-ur="Video upload karein, TikTok par daalne se pehle uska hook, pacing, aur virality score dekhein — plus poori website ad-free." data-en="Upload your video, see its hook, pacing and virality score before posting to TikTok — plus the whole site ad-free.">Video upload karein, TikTok par daalne se pehle uska hook, pacing, aur virality score dekhein — plus poori website ad-free.</p>
+</div>
+
+<div class="container" style="padding-bottom:60px;">
+  <div class="plan-grid" style="display:grid;grid-template-columns:1fr 1fr;gap:18px;max-width:750px;">
+
+    <div class="card">
+      <h3 style="font-size:16px;margin-bottom:6px;" data-ur="Basic Premium" data-en="Basic Premium">Basic Premium</h3>
+      <div class="price-display" data-pkr="Rs 299" data-usd="$2.99" style="font-family:'Space Grotesk',sans-serif;font-size:26px;font-weight:700;margin-bottom:14px;">Rs 299<span style="font-size:12px;color:var(--muted);font-weight:400;"> / month</span></div>
+      <ul style="list-style:none;padding:0;margin:0 0 18px;display:flex;flex-direction:column;gap:9px;font-size:13px;color:var(--muted);">
+        <li>✓ <span data-ur="30 video checks har mahine" data-en="30 video checks per month">30 video checks har mahine</span></li>
+        <li>✓ <span data-ur="Hook, pacing aur virality score" data-en="Hook, pacing and virality score">Hook, pacing aur virality score</span></li>
+        <li>✓ <span data-ur="Poori website ad-free" data-en="Whole site ad-free">Poori website ad-free</span></li>
+      </ul>
+      <button class="btn btn-ghost" onclick="showBackendNote('note')" data-ur="Jald Aayega" data-en="Coming Soon">Jald Aayega</button>
+    </div>
+
+    <div class="card" style="border-color:var(--hot);">
+      <span style="display:inline-block;font-size:10px;font-weight:700;background:var(--hot);color:#fff;padding:3px 9px;border-radius:6px;margin-bottom:8px;">POPULAR</span>
+      <h3 style="font-size:16px;margin-bottom:6px;" data-ur="Unlimited Premium" data-en="Unlimited Premium">Unlimited Premium</h3>
+      <div class="price-display" data-pkr="Rs 499" data-usd="$4.99" style="font-family:'Space Grotesk',sans-serif;font-size:26px;font-weight:700;margin-bottom:14px;">Rs 499<span style="font-size:12px;color:var(--muted);font-weight:400;"> / month</span></div>
+      <ul style="list-style:none;padding:0;margin:0 0 18px;display:flex;flex-direction:column;gap:9px;font-size:13px;color:var(--muted);">
+        <li>✓ <span data-ur="Unlimited video checks" data-en="Unlimited video checks">Unlimited video checks</span></li>
+        <li>✓ <span data-ur="Hook, pacing aur virality score" data-en="Hook, pacing and virality score">Hook, pacing aur virality score</span></li>
+        <li>✓ <span data-ur="Poori website ad-free" data-en="Whole site ad-free">Poori website ad-free</span></li>
+      </ul>
+      <button class="btn btn-hot" onclick="showBackendNote('note')" data-ur="Jald Aayega" data-en="Coming Soon">Jald Aayega</button>
+    </div>
+
+  </div>
+
+  <div class="backend-note" id="note" style="max-width:750px;margin-top:0;">
+    <b data-ur="Ye feature jald aa raha hai." data-en="This feature is coming soon.">Ye feature jald aa raha hai.</b>
+    <span data-ur=" Hum is par kaam kar rahe hain — jald hi yahan se subscribe kar sakenge." data-en=" We're working on it — subscriptions will be available here soon.">Hum is par kaam kar rahe hain — jald hi yahan se subscribe kar sakenge.</span>
+  </div>
+
+  <p id="currencyNote" style="max-width:750px;margin:14px 0 0;color:var(--muted);font-size:11.5px;"></p>
+</div>
+
+<div id="site-footer"></div>
+<script src="js/main.js"></script>
+<script>
+  // Show USD pricing for visitors outside Pakistan, PKR for Pakistan.
+  // Uses a free IP-geolocation lookup; falls back to PKR if it fails or is blocked.
+  (function(){
+    fetch("https://ipapi.co/json/")
+      .then(r => r.json())
+      .then(data => {
+        const note = document.getElementById("currencyNote");
+        if(data && data.country_code && data.country_code !== "PK"){
+          document.querySelectorAll(".price-display").forEach(el => {
+            const usd = el.getAttribute("data-usd");
+            const suffix = el.querySelector("span") ? el.querySelector("span").outerHTML : "";
+            el.innerHTML = usd + suffix;
+          });
+          if(note) note.textContent = "Pricing shown in USD based on your location.";
+        }
+      })
+      .catch(() => { /* stays in PKR (default) if detection fails */ });
+  })();
+</script>
+</body>
+</html>

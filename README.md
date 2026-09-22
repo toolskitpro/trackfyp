@@ -1,4 +1,4 @@
-# TrackFyp — TikTok Growth Tool (Pakistani Creators)
+# TrackFyp — TikTok Growth Tool (Roman Urdu + English)
 
 ## Kya Kaam Karta Hai Abhi (Bina Backend Ke)
 - Hashtag Generator — `tools/hashtag-generator.html`
@@ -12,7 +12,7 @@ Ye teeno **pure JavaScript** se chalte hain — koi backend, koi AI cost nahi.
 - Account Health Check (`tools/account-health.html`)
 - Shadowban Checker (`tools/shadowban-checker.html`)
 - SEO Keyword Finder (`tools/seo-keyword-finder.html`)
-- Trending in Pakistan (`tools/trending-pakistan.html`)
+- Trending Now (`tools/trending.html`)
 - Video Downloader (`tools/video-downloader.html`)
 
 Ye sab real TikTok data ya AI processing chahte hain, jo GitHub Pages (static hosting) nahi kar sakta. Jab backend (Vercel/Supabase/Railway) add hoga, in pages ke form submit handlers ko us backend ke API endpoint se connect karna hoga.
@@ -57,7 +57,7 @@ Ye sab real TikTok data ya AI processing chahte hain, jo GitHub Pages (static ho
 
 ### Ongoing (Regular) Kaam
 - [ ] **Har hafte 1 blog article** likhein — ye bilkul sahi soch hai. Google fresh, useful content ko pasand karta hai, aur har article ek naya "door" banata hai jisse log Google se aapki site tak pohanch sakein
-- [ ] Har article mein wo keywords use karein jo log actually search karte hain (jaise "TikTok par views kam kyun aa rahe hain", "TikTok growth tips Pakistan")
+- [ ] Har article mein wo keywords use karein jo log actually search karte hain (jaise "TikTok par views kam kyun aa rahe hain", "TikTok growth tips")
 - [ ] Articles ko apne tools se link karein (jaisa Week 1 article mein kiya gaya hai) — isse Google samajhta hai pages ek dusre se related hain
 - [ ] Social media (khud TikTok!) par har naya article share karein — isse backlinks aur traffic dono milte hain
 

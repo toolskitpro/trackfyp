@@ -23,18 +23,60 @@
   <div class="card">
     <label class="field-label" data-ur="TikTok video link" data-en="TikTok video link">TikTok video link</label>
     <div class="input-row">
-      <input class="field-input" type="text" data-ur-ph="tiktok.com/@yourhandle/video/..." data-en-ph="tiktok.com/@yourhandle/video/..." placeholder="tiktok.com/@yourhandle/video/...">
-      <button class="btn btn-hot" onclick="showBackendNote('note')" data-ur="Download karein" data-en="Download">Download karein</button>
+      <input class="field-input" id="videoLinkInput" type="text" data-ur-ph="tiktok.com/@yourhandle/video/..." data-en-ph="tiktok.com/@yourhandle/video/..." placeholder="tiktok.com/@yourhandle/video/...">
+      <button class="btn btn-hot" id="downloadBtn" data-ur="Download karein" data-en="Download">Download karein</button>
     </div>
-    <div class="backend-note" id="note">
-      <b data-ur="Ye feature jald aa raha hai." data-en="This feature is coming soon.">Ye feature jald aa raha hai.</b>
-      <span data-ur=" Hum is par kaam kar rahe hain — jald hi download yahan se ho sakega." data-en=" We're working on it — downloads will be available here soon.">Hum is par kaam kar rahe hain — jald hi download yahan se ho sakega.</span>
+    <div class="result-box" id="resultBox">
+      <p id="resultText" style="margin:0 0 10px;"></p>
+      <a id="downloadLink" href="#" target="_blank" class="btn btn-hot" style="display:none;" data-ur="Video Download Karein" data-en="Download Video">Video Download Karein</a>
     </div>
     <div class="section-sub" style="margin-top:18px;color:var(--hot);" data-ur="Yaad rahe: sirf apni videos download karein — doosron ki video redistribute karna copyright violation hai." data-en="Remember: only download your own videos — redistributing someone else's video is a copyright violation.">Yaad rahe: sirf apni videos download karein — doosron ki video redistribute karna copyright violation hai.</div>
   </div>
 </div>
 
+<div class="ad-slot in-content">Ad — In-content Responsive</div>
+
 <div id="site-footer"></div>
 <script src="../js/main.js"></script>
+<script>
+  // IMPORTANT: Render par deploy hone ke baad, yahan apna asal backend link daalein
+  // jaise: "https://trackfyp-backend.onrender.com"
+  const BACKEND_URL = "PASTE_YOUR_RENDER_BACKEND_URL_HERE";
+
+  document.getElementById("downloadBtn").addEventListener("click", async () => {
+    const link = document.getElementById("videoLinkInput").value.trim();
+    const resultBox = document.getElementById("resultBox");
+    const resultText = document.getElementById("resultText");
+    const downloadLink = document.getElementById("downloadLink");
+
+    if (!link) return;
+
+    if (BACKEND_URL.includes("PASTE_YOUR")) {
+      resultText.textContent = "Backend abhi connect nahi hua — pehle Render par deploy karke link yahan daalein.";
+      resultBox.classList.add("show");
+      downloadLink.style.display = "none";
+      return;
+    }
+
+    resultText.textContent = "Processing...";
+    resultBox.classList.add("show");
+    downloadLink.style.display = "none";
+
+    try {
+      const res = await fetch(`${BACKEND_URL}/api/download?url=${encodeURIComponent(link)}`);
+      const data = await res.json();
+
+      if (data.success && data.downloadUrl) {
+        resultText.textContent = `Video mil gayi${data.author ? " (@" + data.author + ")" : ""}.`;
+        downloadLink.href = data.downloadUrl;
+        downloadLink.style.display = "inline-flex";
+      } else {
+        resultText.textContent = data.error || "Kuch masla hua, dobara try karein.";
+      }
+    } catch (err) {
+      resultText.textContent = "Backend se connect nahi ho saka. Thodi der baad try karein.";
+    }
+  });
+</script>
 </body>
 </html>
