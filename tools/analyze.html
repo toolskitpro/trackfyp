@@ -23,17 +23,56 @@
   <div class="card">
     <label class="field-label" data-ur="TikTok video ya profile link" data-en="TikTok video or profile link">TikTok video ya profile link</label>
     <div class="input-row">
-      <input class="field-input" type="text" data-ur-ph="tiktok.com/@yourhandle/video/..." data-en-ph="tiktok.com/@yourhandle/video/..." placeholder="tiktok.com/@yourhandle/video/...">
-      <button class="btn btn-hot" onclick="showBackendNote('note')" data-ur="Analyze karein" data-en="Analyze">Analyze karein</button>
+      <input class="field-input" id="analyzeInput" type="text" data-ur-ph="tiktok.com/@yourhandle/video/..." data-en-ph="tiktok.com/@yourhandle/video/..." placeholder="tiktok.com/@yourhandle/video/...">
+      <button class="btn btn-hot" id="analyzeBtn" data-ur="Analyze karein" data-en="Analyze">Analyze karein</button>
     </div>
-    <div class="backend-note" id="note">
-      <b data-ur="Ye feature jald aa raha hai." data-en="This feature is coming soon.">Ye feature jald aa raha hai.</b>
-      <span data-ur=" Hum is par kaam kar rahe hain — jald hi yahan se real analysis mil sakegi." data-en=" We're working on it — real analysis will be available here soon.">Hum is par kaam kar rahe hain — jald hi yahan se real analysis mil sakegi.</span>
+    <div class="result-box" id="resultBox">
+      <div id="analyzeOutput"></div>
     </div>
+    <div class="ad-slot in-content">Ad — In-content Responsive</div>
   </div>
 </div>
 
 <div id="site-footer"></div>
 <script src="../js/main.js"></script>
+<script>
+  const BACKEND_URL = "https://trackfyp-backend.onrender.com";
+  const dotColor = { bad: "var(--hot)", warn: "var(--gold)", good: "var(--teal)" };
+
+  document.getElementById("analyzeBtn").addEventListener("click", async () => {
+    const link = document.getElementById("analyzeInput").value.trim();
+    const resultBox = document.getElementById("resultBox");
+    const out = document.getElementById("analyzeOutput");
+    if (!link) return;
+
+    out.innerHTML = "Processing...";
+    resultBox.classList.add("show");
+
+    try {
+      const res = await fetch(`${BACKEND_URL}/api/analyze?url=${encodeURIComponent(link)}`);
+      const data = await res.json();
+
+      if (data.success) {
+        let html = `<div style="font-family:'Space Grotesk',sans-serif;font-size:24px;font-weight:700;margin-bottom:12px;">Growth Score: ${data.score}/100</div>`;
+        html += `<div class="metric-strip" style="display:flex;gap:12px;flex-wrap:wrap;margin-bottom:16px;">
+          <div class="metric" style="background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:10px 14px;"><b style="display:block;font-family:'Space Grotesk',sans-serif;">${data.views}</b><span style="color:var(--muted);font-size:11px;">Views</span></div>
+          <div class="metric" style="background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:10px 14px;"><b style="display:block;font-family:'Space Grotesk',sans-serif;">${data.engagementRate}%</b><span style="color:var(--muted);font-size:11px;">Engagement</span></div>
+          <div class="metric" style="background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:10px 14px;"><b style="display:block;font-family:'Space Grotesk',sans-serif;">${data.durationSec}s</b><span style="color:var(--muted);font-size:11px;">Duration</span></div>
+        </div>`;
+        data.diagnosis.forEach(d => {
+          html += `<div style="display:flex;gap:10px;padding:8px 0;border-bottom:1px solid var(--line);">
+            <span style="width:8px;height:8px;border-radius:50%;background:${dotColor[d.type]};margin-top:5px;flex-shrink:0;"></span>
+            <span>${d.text}</span>
+          </div>`;
+        });
+        out.innerHTML = html;
+      } else {
+        out.innerHTML = data.error || "Kuch masla hua, dobara try karein.";
+      }
+    } catch (err) {
+      out.innerHTML = "Backend se connect nahi ho saka. Thodi der baad try karein.";
+    }
+  });
+</script>
 </body>
 </html>

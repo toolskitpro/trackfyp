@@ -30,15 +30,46 @@
       <option value="us">USA</option>
       <option value="uk">UK</option>
     </select>
-    <button class="btn btn-hot" onclick="showBackendNote('note')" data-ur="Trending list dekhein" data-en="See trending list">Trending list dekhein</button>
-    <div class="backend-note" id="note">
-      <b data-ur="Ye feature jald aa raha hai." data-en="This feature is coming soon.">Ye feature jald aa raha hai.</b>
-      <span data-ur=" Hum is par kaam kar rahe hain — jald hi live trending list yahan milegi." data-en=" We're working on it — a live trending list will be available here soon.">Hum is par kaam kar rahe hain — jald hi live trending list yahan milegi.</span>
+    <button class="btn btn-hot" id="trendBtn" data-ur="Trending list dekhein" data-en="See trending list">Trending list dekhein</button>
+    <div class="result-box" id="resultBox">
+      <div id="trendOutput"></div>
     </div>
   </div>
 </div>
 
 <div id="site-footer"></div>
 <script src="../js/main.js"></script>
+<script>
+  const BACKEND_URL = "https://trackfyp-backend.onrender.com";
+
+  document.getElementById("trendBtn").addEventListener("click", async () => {
+    const country = document.getElementById("countrySelect").value;
+    const resultBox = document.getElementById("resultBox");
+    const out = document.getElementById("trendOutput");
+
+    out.innerHTML = "Processing...";
+    resultBox.classList.add("show");
+
+    try {
+      const res = await fetch(`${BACKEND_URL}/api/trending?country=${country}`);
+      const data = await res.json();
+
+      if (data.success && data.trends.length) {
+        let html = "";
+        data.trends.forEach((t, i) => {
+          html += `<div style="display:flex;justify-content:space-between;padding:9px 0;border-bottom:1px solid var(--line);font-size:13px;">
+            <span>#${i + 1} — #${t.hashtag}</span>
+            ${t.posts ? `<span style="color:var(--muted);">${t.posts}</span>` : ""}
+          </div>`;
+        });
+        out.innerHTML = html;
+      } else {
+        out.innerHTML = data.error || "Abhi koi trending data nahi mila.";
+      }
+    } catch (err) {
+      out.innerHTML = "Backend se connect nahi ho saka. Thodi der baad try karein.";
+    }
+  });
+</script>
 </body>
 </html>
