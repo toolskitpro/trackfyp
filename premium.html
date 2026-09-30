@@ -19,7 +19,12 @@
   <p class="page-desc" data-ur="Video upload karein, TikTok par daalne se pehle uska hook, pacing, aur virality score dekhein — plus poori website ad-free." data-en="Upload your video, see its hook, pacing and virality score before posting to TikTok — plus the whole site ad-free.">Video upload karein, TikTok par daalne se pehle uska hook, pacing, aur virality score dekhein — plus poori website ad-free.</p>
 </div>
 
-<div class="container" style="padding-bottom:60px;">
+<div class="container" style="padding-bottom:30px;">
+  <div class="card" style="max-width:750px;margin-bottom:20px;">
+    <label class="field-label" data-ur="Apna email likhein (checkout aur unlock dono ke liye chahiye)" data-en="Enter your email (needed for checkout and unlock)">Apna email likhein (checkout aur unlock dono ke liye chahiye)</label>
+    <input class="field-input" type="email" id="checkoutEmail" placeholder="aapka@email.com">
+  </div>
+
   <div class="plan-grid" style="display:grid;grid-template-columns:1fr 1fr;gap:18px;max-width:750px;">
 
     <div class="card">
@@ -30,7 +35,7 @@
         <li>✓ <span data-ur="Hook, pacing aur virality score" data-en="Hook, pacing and virality score">Hook, pacing aur virality score</span></li>
         <li>✓ <span data-ur="Poori website ad-free" data-en="Whole site ad-free">Poori website ad-free</span></li>
       </ul>
-      <button class="btn btn-ghost" onclick="showBackendNote('note')" data-ur="Jald Aayega" data-en="Coming Soon">Jald Aayega</button>
+      <button class="btn btn-ghost checkout-btn" data-plan="basic" style="width:100%;" data-ur="Subscribe Karein" data-en="Subscribe">Subscribe Karein</button>
     </div>
 
     <div class="card" style="border-color:var(--hot);">
@@ -42,24 +47,20 @@
         <li>✓ <span data-ur="Hook, pacing aur virality score" data-en="Hook, pacing and virality score">Hook, pacing aur virality score</span></li>
         <li>✓ <span data-ur="Poori website ad-free" data-en="Whole site ad-free">Poori website ad-free</span></li>
       </ul>
-      <button class="btn btn-hot" onclick="showBackendNote('note')" data-ur="Jald Aayega" data-en="Coming Soon">Jald Aayega</button>
+      <button class="btn btn-hot checkout-btn" data-plan="unlimited" style="width:100%;" data-ur="Subscribe Karein" data-en="Subscribe">Subscribe Karein</button>
     </div>
 
   </div>
 
-  <div class="backend-note" id="note" style="max-width:750px;margin-top:0;">
-    <b data-ur="Ye feature jald aa raha hai." data-en="This feature is coming soon.">Ye feature jald aa raha hai.</b>
-    <span data-ur=" Hum is par kaam kar rahe hain — jald hi yahan se subscribe kar sakenge." data-en=" We're working on it — subscriptions will be available here soon.">Hum is par kaam kar rahe hain — jald hi yahan se subscribe kar sakenge.</span>
-  </div>
-
-  <p id="currencyNote" style="max-width:750px;margin:14px 0 0;color:var(--muted);font-size:11.5px;"></p>
+  <p id="checkoutStatus" style="max-width:750px;margin:14px 0 0;color:var(--muted);font-size:12.5px;"></p>
+  <p id="currencyNote" style="max-width:750px;margin:6px 0 0;color:var(--muted);font-size:11.5px;"></p>
 
   <div class="card" style="max-width:750px;margin-top:24px;border-color:var(--gold);">
-    <div style="display:inline-block;font-size:10px;font-weight:700;background:rgba(255,194,75,.15);color:var(--gold);padding:3px 9px;border-radius:6px;margin-bottom:10px;">TESTING ONLY — NOT PUBLIC</div>
-    <h3 style="font-size:15px;margin-bottom:6px;">AI Test Tool (sirf apni testing ke liye)</h3>
-    <p style="color:var(--muted);font-size:12.5px;margin-bottom:14px;">Ye seedha AI se connect hai — payment gateway lagne tak is form ka link kisi ke sath share na karein, warna log free mein Premium use kar lenge.</p>
+    <div style="display:inline-block;font-size:10px;font-weight:700;background:rgba(255,194,75,.15);color:var(--gold);padding:3px 9px;border-radius:6px;margin-bottom:10px;">AI VIDEO TEST</div>
+    <h3 style="font-size:15px;margin-bottom:6px;" data-ur="Video Test Karein (sirf active subscribers ke liye)" data-en="Test Your Video (active subscribers only)">Video Test Karein (sirf active subscribers ke liye)</h3>
+    <p style="color:var(--muted);font-size:12.5px;margin-bottom:14px;" data-ur="Upar wala email hi yahan use hoga — subscription check hone ke baad hi video process hogi." data-en="The email above is used here too — the video only processes after your subscription is verified.">Upar wala email hi yahan use hoga — subscription check hone ke baad hi video process hogi.</p>
     <input type="file" id="videoFile" accept="video/*" class="field-input">
-    <button class="btn btn-hot" id="premiumBtn" data-ur="Test Analyze Karein" data-en="Test Analyze">Test Analyze Karein</button>
+    <button class="btn btn-hot" id="premiumBtn" data-ur="Video Analyze Karein" data-en="Analyze Video">Video Analyze Karein</button>
     <div class="result-box" id="premiumResultBox">
       <div id="premiumOutput"></div>
     </div>
@@ -70,12 +71,46 @@
 <script src="js/main.js"></script>
 <script>
   const BACKEND_URL = "https://trackfyp-backend.onrender.com";
+  let currentCurrency = "pkr"; // default, updated by geo-detection below
 
+  // ---- Checkout buttons ----
+  document.querySelectorAll(".checkout-btn").forEach(btn => {
+    btn.addEventListener("click", async () => {
+      const email = document.getElementById("checkoutEmail").value.trim();
+      const status = document.getElementById("checkoutStatus");
+      if (!email) {
+        status.textContent = "Pehle apna email likhein.";
+        return;
+      }
+      const planKey = btn.dataset.plan + "_" + currentCurrency; // e.g. basic_pkr
+      status.textContent = "Checkout ban raha hai...";
+
+      try {
+        const res = await fetch(`${BACKEND_URL}/api/create-checkout`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ email, plan: planKey }),
+        });
+        const data = await res.json();
+        if (data.success && data.checkoutUrl) {
+          window.location.href = data.checkoutUrl;
+        } else {
+          status.textContent = data.error || "Checkout banane mein masla hua.";
+        }
+      } catch (err) {
+        status.textContent = "Backend se connect nahi ho saka.";
+      }
+    });
+  });
+
+  // ---- Premium AI video test ----
   document.getElementById("premiumBtn").addEventListener("click", async () => {
+    const email = document.getElementById("checkoutEmail").value.trim();
     const fileInput = document.getElementById("videoFile");
     const resultBox = document.getElementById("premiumResultBox");
     const out = document.getElementById("premiumOutput");
 
+    if (!email) { alert("Pehle apna email likhein (upar wale box mein)."); return; }
     if (!fileInput.files[0]) return;
 
     out.innerHTML = "Video process ho rahi hai, 20-40 second lag sakte hain...";
@@ -83,12 +118,10 @@
 
     const formData = new FormData();
     formData.append("video", fileInput.files[0]);
+    formData.append("email", email);
 
     try {
-      const res = await fetch(`${BACKEND_URL}/api/premium-analyze`, {
-        method: "POST",
-        body: formData,
-      });
+      const res = await fetch(`${BACKEND_URL}/api/premium-analyze`, { method: "POST", body: formData });
       const data = await res.json();
 
       if (data.success) {
@@ -108,19 +141,20 @@
     }
   });
 
-  // Show USD pricing for visitors outside Pakistan, PKR for Pakistan.
+  // ---- Currency detection (PKR default, USD for non-Pakistan) ----
   (function(){
     fetch("https://ipapi.co/json/")
       .then(r => r.json())
       .then(data => {
         const note = document.getElementById("currencyNote");
-        if(data && data.country_code && data.country_code !== "PK"){
+        if (data && data.country_code && data.country_code !== "PK") {
+          currentCurrency = "usd";
           document.querySelectorAll(".price-display").forEach(el => {
             const usd = el.getAttribute("data-usd");
             const suffix = el.querySelector("span") ? el.querySelector("span").outerHTML : "";
             el.innerHTML = usd + suffix;
           });
-          if(note) note.textContent = "Pricing shown in USD based on your location.";
+          if (note) note.textContent = "Pricing shown in USD based on your location.";
         }
       })
       .catch(() => {});
