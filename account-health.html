@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="ur">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Account Health Check — TrackFyp</title>
+<meta name="description" content="Apna TikTok profile link daalein aur real data se health score payein.">
+<link rel="icon" href="data:,">
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../css/style.css">
+</head>
+<body>
+<script>window.BASE = "../";</script>
+<div id="site-header"></div>
+
+<div class="page-hero container">
+  <div class="kicker">ACCOUNT HEALTH CHECK</div>
+  <h1 class="page-title" data-ur="Account Health Check" data-en="Account Health Check">Account Health Check</h1>
+  <p class="page-desc" data-ur="Apna profile link daalein — real public data se health score aur suggestions milenge." data-en="Paste your profile link — get a health score and suggestions from real public data.">Apna profile link daalein — real public data se health score aur suggestions milenge.</p>
+</div>
+
+<div class="container" style="padding-bottom:60px;">
+  <div class="card">
+    <label class="field-label" data-ur="TikTok profile link" data-en="TikTok profile link">TikTok profile link</label>
+    <div class="input-row">
+      <input class="field-input" id="healthInput" type="text" data-ur-ph="tiktok.com/@yourhandle" data-en-ph="tiktok.com/@yourhandle" placeholder="tiktok.com/@yourhandle">
+      <button class="btn btn-hot" id="healthBtn" data-ur="Health check karein" data-en="Check health">Health check karein</button>
+    </div>
+    <div class="result-box" id="resultBox">
+      <div id="healthOutput"></div>
+    </div>
+  </div>
+</div>
+
+<div id="site-footer"></div>
+<script src="../js/main.js"></script>
+<script>
+  const BACKEND_URL = "https://trackfyp-backend.onrender.com";
+  const dotColor = { bad: "var(--hot)", warn: "var(--gold)", good: "var(--teal)" };
+
+  document.getElementById("healthBtn").addEventListener("click", async () => {
+    const link = document.getElementById("healthInput").value.trim();
+    const resultBox = document.getElementById("resultBox");
+    const out = document.getElementById("healthOutput");
+    if (!link) return;
+    out.innerHTML = "Processing...";
+    resultBox.classList.add("show");
+    try {
+      const res = await fetch(`${BACKEND_URL}/api/channel-analyze?url=${encodeURIComponent(link)}`);
+      const data = await res.json();
+      if (data.success) {
+        let html = `<div style="display:flex;gap:12px;flex-wrap:wrap;margin-bottom:16px;">
+          <div style="background:var(--panel-2);border:1px solid var(--line);border-radius:10px;padding:10px 14px;"><b style="display:block;font-family:'Space Grotesk',sans-serif;">${data.followerCount}</b><span style="color:var(--muted);font-size:11px;">Followers</span></div>
+          <div style="background:var(--panel-2);border:1px solid var(--line);border-radius:10px;padding:10px 14px;"><b style="display:block;font-family:'Space Grotesk',sans-serif;">${data.videoCount}</b><span style="color:var(--muted);font-size:11px;">Videos</span></div>
+          <div style="background:var(--panel-2);border:1px solid var(--line);border-radius:10px;padding:10px 14px;"><b style="display:block;font-family:'Space Grotesk',sans-serif;">${data.avgLikesPerVideo}</b><span style="color:var(--muted);font-size:11px;">Avg Likes/Video</span></div>
+        </div>`;
+        data.diagnosis.forEach(d => {
+          html += `<div style="display:flex;gap:10px;padding:8px 0;border-bottom:1px solid var(--line);">
+            <span style="width:8px;height:8px;border-radius:50%;background:${dotColor[d.type]};margin-top:5px;flex-shrink:0;"></span>
+            <span>${d.text}</span>
+          </div>`;
+        });
+        out.innerHTML = html;
+      } else {
+        out.innerHTML = data.error || "Kuch masla hua, dobara try karein.";
+      }
+    } catch (err) {
+      out.innerHTML = "Backend se connect nahi ho saka. Thodi der baad try karein.";
+    }
+  });
+</script>
+</body>
+</html>

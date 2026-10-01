@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="ur">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Shadowban Checker — TrackFyp</title>
+<meta name="description" content="Apna TikTok profile link daalein aur reach-suppression ka estimate payein.">
+<link rel="icon" href="data:,">
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../css/style.css">
+</head>
+<body>
+<script>window.BASE = "../";</script>
+<div id="site-header"></div>
+
+<div class="page-hero container">
+  <div class="kicker">SHADOWBAN CHECKER</div>
+  <h1 class="page-title" data-ur="Shadowban Checker" data-en="Shadowban Checker">Shadowban Checker</h1>
+  <p class="page-desc" data-ur="Apna profile link daalein — public engagement data se ek estimate milega. Ye TikTok ka official status nahi hai, sirf andaza hai." data-en="Paste your profile link for an estimate from public engagement data. Not an official TikTok status — just an estimate.">Apna profile link daalein — public engagement data se ek estimate milega. Ye TikTok ka official status nahi hai, sirf andaza hai.</p>
+</div>
+
+<div class="container" style="padding-bottom:60px;">
+  <div class="card">
+    <label class="field-label" data-ur="TikTok profile link" data-en="TikTok profile link">TikTok profile link</label>
+    <div class="input-row">
+      <input class="field-input" id="sbInput" type="text" data-ur-ph="tiktok.com/@yourhandle" data-en-ph="tiktok.com/@yourhandle" placeholder="tiktok.com/@yourhandle">
+      <button class="btn btn-hot" id="sbBtn" data-ur="Check karein" data-en="Check">Check karein</button>
+    </div>
+    <div class="result-box" id="resultBox">
+      <div id="sbOutput"></div>
+      <p style="color:var(--muted);font-size:11.5px;margin-top:12px;" data-ur="Ye estimate current engagement ratio se banaya gaya hai, TikTok ki apni history data se nahi (wo kisi ko nahi milta)." data-en="This estimate is based on current engagement ratio, not TikTok's own history data (which isn't available to anyone).">Ye estimate current engagement ratio se banaya gaya hai, TikTok ki apni history data se nahi (wo kisi ko nahi milta).</p>
+    </div>
+  </div>
+</div>
+
+<div id="site-footer"></div>
+<script src="../js/main.js"></script>
+<script>
+  const BACKEND_URL = "https://trackfyp-backend.onrender.com";
+
+  document.getElementById("sbBtn").addEventListener("click", async () => {
+    const link = document.getElementById("sbInput").value.trim();
+    const resultBox = document.getElementById("resultBox");
+    const out = document.getElementById("sbOutput");
+    if (!link) return;
+    out.innerHTML = "Processing...";
+    resultBox.classList.add("show");
+    try {
+      const res = await fetch(`${BACKEND_URL}/api/shadowban-check?url=${encodeURIComponent(link)}`);
+      const data = await res.json();
+      if (data.success) {
+        const colors = { "Low Risk": "var(--teal)", "Medium Risk": "var(--gold)", "High Risk": "var(--hot)" };
+        const bgs = { "Low Risk": "var(--teal-dim)", "Medium Risk": "rgba(255,194,75,.15)", "High Risk": "var(--hot-dim)" };
+        out.innerHTML = `
+          <div style="display:flex;align-items:center;gap:16px;flex-wrap:wrap;">
+            <span style="font-family:'Space Grotesk',sans-serif;font-weight:700;font-size:17px;padding:9px 16px;border-radius:10px;background:${bgs[data.riskLevel]};color:${colors[data.riskLevel]};">${data.riskLevel}</span>
+            <span style="flex:1;min-width:200px;font-size:13px;">${data.riskReason}</span>
+          </div>
+          <div style="display:flex;gap:12px;flex-wrap:wrap;margin-top:16px;">
+            <div style="background:var(--panel-2);border:1px solid var(--line);border-radius:10px;padding:10px 14px;"><b style="display:block;font-family:'Space Grotesk',sans-serif;">${data.followerCount}</b><span style="color:var(--muted);font-size:11px;">Followers</span></div>
+            <div style="background:var(--panel-2);border:1px solid var(--line);border-radius:10px;padding:10px 14px;"><b style="display:block;font-family:'Space Grotesk',sans-serif;">${data.avgLikesPerVideo}</b><span style="color:var(--muted);font-size:11px;">Avg Likes/Video</span></div>
+          </div>`;
+      } else {
+        out.innerHTML = data.error || "Kuch masla hua, dobara try karein.";
+      }
+    } catch (err) {
+      out.innerHTML = "Backend se connect nahi ho saka. Thodi der baad try karein.";
+    }
+  });
+</script>
+</body>
+</html>
