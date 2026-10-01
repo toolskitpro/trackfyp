@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="ur">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Video &amp; Channel Analysis — TrackFyp</title>
+<meta name="description" content="TikTok video ya channel link paste karke Growth Score aur diagnosis payein.">
+<link rel="icon" href="data:,">
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../css/style.css">
+</head>
+<body>
+<script>window.BASE = "../";</script>
+<div id="site-header"></div>
+
+<div class="page-hero container">
+  <div class="kicker">VIDEO / CHANNEL ANALYSIS</div>
+  <h1 class="page-title" data-ur="Link Paste Karein, Analysis Payein" data-en="Paste a Link, Get an Analysis">Link Paste Karein, Analysis Payein</h1>
+  <p class="page-desc" data-ur="Ek specific video ka link ya poora profile link daalein — dono ka alag tareeqe se analysis milta hai." data-en="Paste a specific video link or a full profile link — each gets analyzed differently.">Ek specific video ka link ya poora profile link daalein — dono ka alag tareeqe se analysis milta hai.</p>
+</div>
+
+<div class="container" style="padding-bottom:60px;">
+  <div class="card">
+    <div style="display:flex;gap:8px;margin-bottom:18px;">
+      <button class="btn" id="tabVideo" style="background:var(--hot);color:#fff;flex:1;">Video</button>
+      <button class="btn btn-ghost" id="tabChannel" style="flex:1;">Channel</button>
+    </div>
+
+    <div id="videoPanel">
+      <label class="field-label" data-ur="TikTok video link" data-en="TikTok video link">TikTok video link</label>
+      <div class="input-row">
+        <input class="field-input" id="videoInput" type="text" data-ur-ph="tiktok.com/@yourhandle/video/..." data-en-ph="tiktok.com/@yourhandle/video/..." placeholder="tiktok.com/@yourhandle/video/...">
+        <button class="btn btn-hot" id="videoBtn" data-ur="Analyze karein" data-en="Analyze">Analyze karein</button>
+      </div>
+    </div>
+
+    <div id="channelPanel" style="display:none;">
+      <label class="field-label" data-ur="TikTok profile link" data-en="TikTok profile link">TikTok profile link</label>
+      <div class="input-row">
+        <input class="field-input" id="channelInput" type="text" data-ur-ph="tiktok.com/@yourhandle" data-en-ph="tiktok.com/@yourhandle" placeholder="tiktok.com/@yourhandle">
+        <button class="btn btn-hot" id="channelBtn" data-ur="Analyze karein" data-en="Analyze">Analyze karein</button>
+      </div>
+    </div>
+
+    <div class="result-box" id="resultBox">
+      <div id="analyzeOutput"></div>
+    </div>
+    <div class="ad-slot in-content" style="border:1.5px dashed var(--line);border-radius:10px;padding:18px;margin:16px auto;display:flex;align-items:center;justify-content:center;color:var(--muted);font-size:11.5px;">Ad — In-content Responsive</div>
+  </div>
+</div>
+
+<div id="site-footer"></div>
+<script src="../js/main.js"></script>
+<script>
+  const BACKEND_URL = "https://trackfyp-backend.onrender.com";
+  const dotColor = { bad: "var(--hot)", warn: "var(--gold)", good: "var(--teal)" };
+
+  document.getElementById("tabVideo").addEventListener("click", () => {
+    document.getElementById("videoPanel").style.display = "block";
+    document.getElementById("channelPanel").style.display = "none";
+    document.getElementById("tabVideo").style.background = "var(--hot)";
+    document.getElementById("tabVideo").style.color = "#fff";
+    document.getElementById("tabChannel").style.background = "transparent";
+    document.getElementById("tabChannel").style.color = "var(--text)";
+  });
+  document.getElementById("tabChannel").addEventListener("click", () => {
+    document.getElementById("channelPanel").style.display = "block";
+    document.getElementById("videoPanel").style.display = "none";
+    document.getElementById("tabChannel").style.background = "var(--hot)";
+    document.getElementById("tabChannel").style.color = "#fff";
+    document.getElementById("tabVideo").style.background = "transparent";
+    document.getElementById("tabVideo").style.color = "var(--text)";
+  });
+
+  function renderDiagnosis(diagnosis) {
+    let html = "";
+    diagnosis.forEach(d => {
+      html += `<div style="display:flex;gap:10px;padding:8px 0;border-bottom:1px solid var(--line);">
+        <span style="width:8px;height:8px;border-radius:50%;background:${dotColor[d.type]};margin-top:5px;flex-shrink:0;"></span>
+        <span>${d.text}</span>
+      </div>`;
+    });
+    return html;
+  }
+
+  document.getElementById("videoBtn").addEventListener("click", async () => {
+    const link = document.getElementById("videoInput").value.trim();
+    const resultBox = document.getElementById("resultBox");
+    const out = document.getElementById("analyzeOutput");
+    if (!link) return;
+    out.innerHTML = "Processing...";
+    resultBox.classList.add("show");
+    try {
+      const res = await fetch(`${BACKEND_URL}/api/analyze?url=${encodeURIComponent(link)}`);
+      const data = await res.json();
+      if (data.success) {
+        let html = `<div style="font-family:'Space Grotesk',sans-serif;font-size:24px;font-weight:700;margin-bottom:12px;">Growth Score: ${data.score}/100</div>`;
+        html += `<div style="display:flex;gap:12px;flex-wrap:wrap;margin-bottom:16px;">
+          <div style="background:var(--panel-2);border:1px solid var(--line);border-radius:10px;padding:10px 14px;"><b style="display:block;font-family:'Space Grotesk',sans-serif;">${data.views}</b><span style="color:var(--muted);font-size:11px;">Views</span></div>
+          <div style="background:var(--panel-2);border:1px solid var(--line);border-radius:10px;padding:10px 14px;"><b style="display:block;font-family:'Space Grotesk',sans-serif;">${data.engagementRate}%</b><span style="color:var(--muted);font-size:11px;">Engagement</span></div>
+          <div style="background:var(--panel-2);border:1px solid var(--line);border-radius:10px;padding:10px 14px;"><b style="display:block;font-family:'Space Grotesk',sans-serif;">${data.durationSec}s</b><span style="color:var(--muted);font-size:11px;">Duration</span></div>
+        </div>`;
+        html += renderDiagnosis(data.diagnosis);
+        out.innerHTML = html;
+      } else {
+        out.innerHTML = data.error || "Kuch masla hua, dobara try karein.";
+      }
+    } catch (err) {
+      out.innerHTML = "Backend se connect nahi ho saka. Thodi der baad try karein.";
+    }
+  });
+
+  document.getElementById("channelBtn").addEventListener("click", async () => {
+    const link = document.getElementById("channelInput").value.trim();
+    const resultBox = document.getElementById("resultBox");
+    const out = document.getElementById("analyzeOutput");
+    if (!link) return;
+    out.innerHTML = "Processing...";
+    resultBox.classList.add("show");
+    try {
+      const res = await fetch(`${BACKEND_URL}/api/channel-analyze?url=${encodeURIComponent(link)}`);
+      const data = await res.json();
+      if (data.success) {
+        let html = `<div style="display:flex;gap:12px;flex-wrap:wrap;margin-bottom:16px;">
+          <div style="background:var(--panel-2);border:1px solid var(--line);border-radius:10px;padding:10px 14px;"><b style="display:block;font-family:'Space Grotesk',sans-serif;">${data.followerCount}</b><span style="color:var(--muted);font-size:11px;">Followers</span></div>
+          <div style="background:var(--panel-2);border:1px solid var(--line);border-radius:10px;padding:10px 14px;"><b style="display:block;font-family:'Space Grotesk',sans-serif;">${data.videoCount}</b><span style="color:var(--muted);font-size:11px;">Videos</span></div>
+          <div style="background:var(--panel-2);border:1px solid var(--line);border-radius:10px;padding:10px 14px;"><b style="display:block;font-family:'Space Grotesk',sans-serif;">${data.avgLikesPerVideo}</b><span style="color:var(--muted);font-size:11px;">Avg Likes/Video</span></div>
+        </div>`;
+        html += renderDiagnosis(data.diagnosis);
+        out.innerHTML = html;
+      } else {
+        out.innerHTML = data.error || "Kuch masla hua, dobara try karein.";
+      }
+    } catch (err) {
+      out.innerHTML = "Backend se connect nahi ho saka. Thodi der baad try karein.";
+    }
+  });
+</script>
+</body>
+</html>

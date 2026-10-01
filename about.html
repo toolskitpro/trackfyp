@@ -13,17 +13,61 @@
 <script>window.BASE = "";</script>
 <div id="site-header"></div>
 
-<article class="article-body" style="max-width:720px;">
+<article class="article-body" style="max-width:520px;">
   <h1 style="font-size:26px;margin-bottom:8px;">TrackFyp Ke Baare Mein</h1>
   <p>TrackFyp TikTok creators ke liye banaya gaya hai — taake growth tools istemal karne ke liye alag-alag websites na dhoondni parein, aur sab kuch ek jagah mil jaye, apni pasand ki zaban mein (Roman Urdu ya English).</p>
 
-  <h2>Rabta Karein</h2>
-  <p>Neeche diya gaya form bharein — hum jald reply karenge. Chahen to seedha email bhi kar sakte hain: <a href="mailto:hello@trackfyp.com" style="color:var(--teal);">hello@trackfyp.com</a></p>
+  <h2 style="font-size:20px;margin:28px 0 10px;">Rabta Karein</h2>
+  <p style="margin-bottom:18px;">Koi sawal, suggestion, ya masla ho to neeche form bharein — hum jald reply karenge.</p>
 
-  <iframe id="contactForm" src="https://sites.google.com/view/trackfyp/home" width="100%" height="560" style="border:1px solid var(--line);border-radius:12px;background:#0E1014;" frameborder="0" marginheight="0" marginwidth="0">Loading…</iframe>
+  <form id="contactForm" style="background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:22px;">
+    <label style="display:block;font-size:12.5px;color:var(--muted);margin-bottom:6px;">Naam</label>
+    <input type="text" id="cf-name" name="name" required style="width:100%;background:var(--panel-2);border:1px solid var(--line);border-radius:10px;padding:11px 13px;color:var(--text);font-size:14px;font-family:'Inter',sans-serif;margin-bottom:16px;">
+
+    <label style="display:block;font-size:12.5px;color:var(--muted);margin-bottom:6px;">Email</label>
+    <input type="email" id="cf-email" name="email" required style="width:100%;background:var(--panel-2);border:1px solid var(--line);border-radius:10px;padding:11px 13px;color:var(--text);font-size:14px;font-family:'Inter',sans-serif;margin-bottom:16px;">
+
+    <label style="display:block;font-size:12.5px;color:var(--muted);margin-bottom:6px;">Message</label>
+    <textarea id="cf-message" name="message" required style="width:100%;background:var(--panel-2);border:1px solid var(--line);border-radius:10px;padding:11px 13px;color:var(--text);font-size:14px;font-family:'Inter',sans-serif;margin-bottom:16px;min-height:100px;resize:vertical;"></textarea>
+
+    <button type="submit" class="btn btn-hot" style="width:100%;">Bhejein</button>
+    <div id="cf-status" style="margin-top:14px;font-size:13px;text-align:center;display:none;"></div>
+  </form>
 </article>
 
 <div id="site-footer"></div>
 <script src="js/main.js"></script>
+<script>
+  const FORM_ENDPOINT = "https://formspree.io/f/maenjken";
+
+  document.getElementById("contactForm").addEventListener("submit", async function(e){
+    e.preventDefault();
+    const status = document.getElementById("cf-status");
+    const form = e.target;
+
+    status.textContent = "Bhej raha hai...";
+    status.style.color = "var(--muted)";
+    status.style.display = "block";
+
+    try {
+      const res = await fetch(FORM_ENDPOINT, {
+        method: "POST",
+        headers: { "Accept": "application/json" },
+        body: new FormData(form)
+      });
+      if (res.ok) {
+        status.textContent = "Shukriya! Aapka message mil gaya, jald reply karenge.";
+        status.style.color = "var(--teal)";
+        form.reset();
+      } else {
+        status.textContent = "Kuch masla hua, dobara try karein.";
+        status.style.color = "var(--hot)";
+      }
+    } catch (err) {
+      status.textContent = "Bhejne mein masla hua. Thodi der baad try karein.";
+      status.style.color = "var(--hot)";
+    }
+  });
+</script>
 </body>
 </html>
