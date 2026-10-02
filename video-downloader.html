@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="ur">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Video Downloader — TrackFyp</title>
+<meta name="description" content="Apni TikTok videos bina watermark ke download karein.">
+<link rel="icon" href="data:,">
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../css/style.css">
+</head>
+<body>
+<script>window.BASE = "../";</script>
+<div id="site-header"></div>
+
+<div class="page-hero container">
+  <div class="kicker">VIDEO DOWNLOADER</div>
+  <h1 class="page-title" data-ur="Video Downloader" data-en="Video Downloader">Video Downloader</h1>
+  <p class="page-desc" data-ur="Link paste karein, bina watermark ke video download karein." data-en="Paste a link, download the video without a watermark.">Link paste karein, bina watermark ke video download karein.</p>
+</div>
+
+<div class="container" style="padding-bottom:60px;">
+  <div class="card">
+    <label class="field-label" data-ur="TikTok video link" data-en="TikTok video link">TikTok video link</label>
+    <div class="input-row">
+      <input class="field-input" id="videoLinkInput" type="text" placeholder="tiktok.com/@yourhandle/video/...">
+      <button class="btn btn-hot" id="downloadBtn" data-ur="Download karein" data-en="Download">Download karein</button>
+    </div>
+    <div class="result-box" id="resultBox">
+      <p id="resultText" style="margin:0;"></p>
+    </div>
+    <div class="section-sub" style="margin-top:18px;color:var(--hot);">Yaad rahe: sirf apni videos download karein.</div>
+  </div>
+</div>
+
+<div id="site-footer"></div>
+<script src="../js/main.js"></script>
+<script>
+  const BACKEND_URL = "https://trackfyp-backend.onrender.com";
+
+  document.getElementById("downloadBtn").addEventListener("click", () => {
+    const link = document.getElementById("videoLinkInput").value.trim();
+    const resultBox = document.getElementById("resultBox");
+    const resultText = document.getElementById("resultText");
+    if (!link) return;
+
+    resultText.textContent = "Download shuru ho raha hai...";
+    resultBox.classList.add("show");
+
+    // Seedha backend ke proxy endpoint se download trigger karte hain
+    const downloadUrl = `${BACKEND_URL}/api/download-file?url=${encodeURIComponent(link)}`;
+    window.location.href = downloadUrl;
+
+    setTimeout(() => {
+      resultText.textContent = "Agar download shuru nahi hua, link check karke dobara try karein.";
+    }, 3000);
+  });
+</script>
+</body>
+</html>
